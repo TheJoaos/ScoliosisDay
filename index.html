@@ -7,13 +7,15 @@
   <style>
     body {
       font-family: sans-serif;
-      background: #f4f4f4;
+      background: #0097a7;
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       padding: 20px;
+      text-align: center;
     }
     .container {
       position: relative;
@@ -33,6 +35,19 @@
       object-fit: cover;
       z-index: 1;
     }
+    #user-photo.loaded {
+      animation: zoomIn 0.5s ease;
+    }
+    @keyframes zoomIn {
+      from {
+        transform: scale(1.1);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
     #frame {
       position: absolute;
       top: 0;
@@ -46,7 +61,7 @@
       margin: 20px 0;
     }
     button {
-      background: #007bff;
+      background: #ff9242;
       color: white;
       border: none;
       padding: 10px 20px;
@@ -54,6 +69,13 @@
       cursor: pointer;
       font-size: 16px;
       margin-top: 10px;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    button:active {
+      transform: scale(0.97);
     }
     #final-image {
       margin-top: 20px;
@@ -61,17 +83,34 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+    .info-text {
+      font-size: 14px;
+      margin-top: 8px;
+      color: white;
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
-  <h2>Adicione sua foto à moldura!</h2>
-  <input type="file" accept="image/*" id="upload" />
-  <div class="container" id="preview">
+  <h2 class="fade-in">Marque presença no Scoliosis Day</h2>
+  <input type="file" accept="image/*" id="upload" class="fade-in" />
+  <div class="container fade-in" id="preview">
     <img id="user-photo" src="" alt="Sua foto" />
     <img id="frame" src="moldura.png" alt="Moldura" />
   </div>
-  <button onclick="downloadImage()">Ver imagem final</button>
-  <button onclick="compartilhar()">Compartilhar este site</button>
+  <button class="fade-in" onclick="downloadImage()">Ver imagem final</button>
+  <div class="info-text fade-in">Pressione e segure a imagem abaixo para salvar na sua galeria.</div>
+  <button class="fade-in" onclick="compartilhar()">Compartilhe o link com outros amigos</button>
 
   <canvas id="canvas" width="300" height="533" style="display: none;"></canvas>
   <img id="final-image" />
@@ -86,6 +125,10 @@
         userPhoto.src = URL.createObjectURL(file);
       }
     });
+
+    userPhoto.onload = () => {
+      userPhoto.classList.add('loaded');
+    };
 
     function downloadImage() {
       const canvas = document.getElementById('canvas');
@@ -105,8 +148,6 @@
 
         const finalData = canvas.toDataURL("image/png");
         finalImg.src = finalData;
-
-        alert("Imagem gerada! Pressione e segure na imagem para salvar no seu celular.");
       };
     }
 
