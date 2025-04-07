@@ -114,8 +114,9 @@
 
   <canvas id="canvas" width="300" height="533" style="display: none;"></canvas>
   <img id="final-image" />
+  <button id="save-btn" style="display: none;">Salvar imagem no dispositivo</button>
 
-  <div class="fade-in" style="margin-top: 30px;">
+  <div class="fade-in" style="margin-top: 30px;" id="compartilhar-bloco">
     <div class="arrow">⬇️</div>
     <button onclick="compartilhar()">Compartilhe o link com outros amigos</button>
   </div>
@@ -156,6 +157,7 @@
       const photo = document.getElementById('user-photo');
       const frame = document.getElementById('frame');
       const finalImg = document.getElementById('final-image');
+      const saveBtn = document.getElementById('save-btn');
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(photo, parseFloat(photo.style.left || 0), parseFloat(photo.style.top || 0), photo.width, photo.height);
@@ -166,6 +168,15 @@
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         const finalData = canvas.toDataURL("image/png");
         finalImg.src = finalData;
+        saveBtn.style.display = 'inline-block';
+        saveBtn.onclick = () => {
+          const a = document.createElement('a');
+          a.href = finalData;
+          a.download = 'scoliosisday.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
       };
     }
 
