@@ -30,23 +30,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      max-width: none;
       z-index: 1;
-    }
-    #user-photo.loaded {
-      animation: zoomIn 0.5s ease;
-    }
-    @keyframes zoomIn {
-      from {
-        transform: scale(1.1);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
     }
     #frame {
       position: absolute;
@@ -99,13 +84,20 @@
         transform: translateY(0);
       }
     }
+    .preview-transition {
+      animation: fadeImageIn 0.5s ease;
+    }
+    @keyframes fadeImageIn {
+      from { opacity: 0; transform: scale(1.05); }
+      to { opacity: 1; transform: scale(1); }
+    }
   </style>
 </head>
 <body>
   <h2 class="fade-in">Marque presença no Scoliosis Day</h2>
   <input type="file" accept="image/*" id="upload" class="fade-in" />
   <div class="container fade-in" id="preview">
-    <img id="user-photo" src="" alt="Sua foto" />
+    <img id="user-photo" src="" alt="Sua foto" style="display: none;" />
     <img id="frame" src="moldura.png" alt="Moldura" />
   </div>
   <button class="fade-in" onclick="downloadImage()">Ver imagem final</button>
@@ -118,17 +110,33 @@
   <script>
     const upload = document.getElementById('upload');
     const userPhoto = document.getElementById('user-photo');
+    const previewContainer = document.getElementById('preview');
 
     upload.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
-        userPhoto.src = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          const aspectRatio = img.width / img.height;
+          const containerWidth = 300;
+          const containerHeight = 533;
+          const containerRatio = containerWidth / containerHeight;
+
+          if (aspectRatio > containerRatio) {
+            userPhoto.width = containerWidth * aspectRatio / containerRatio;
+            userPhoto.height = containerHeight;
+          } else {
+            userPhoto.width = containerWidth;
+            userPhoto.height = containerHeight * containerRatio / aspectRatio;
+          }
+
+          userPhoto.src = URL.createObjectURL(file);
+          userPhoto.style.display = 'block';
+          userPhoto.classList.add('preview-transition');
+        };
+        img.src = URL.createObjectURL(file);
       }
     });
-
-    userPhoto.onload = () => {
-      userPhoto.classList.add('loaded');
-    };
 
     function downloadImage() {
       const canvas = document.getElementById('canvas');
@@ -138,14 +146,12 @@
       const finalImg = document.getElementById('final-image');
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       ctx.drawImage(photo, 0, 0, canvas.width, canvas.height);
 
       const img = new Image();
       img.src = frame.src;
       img.onload = () => {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
         const finalData = canvas.toDataURL("image/png");
         finalImg.src = finalData;
       };
