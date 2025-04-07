@@ -91,6 +91,15 @@
       from { opacity: 0; transform: scale(1.05); }
       to { opacity: 1; transform: scale(1); }
     }
+    .arrow {
+      font-size: 24px;
+      margin-top: 12px;
+      animation: bounce 1.2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
   </style>
 </head>
 <body>
@@ -102,10 +111,14 @@
   </div>
   <button class="fade-in" onclick="downloadImage()">Ver imagem final</button>
   <div class="info-text fade-in">Pressione e segure a imagem abaixo para salvar na sua galeria.</div>
-  <button class="fade-in" onclick="compartilhar()">Compartilhe o link com outros amigos</button>
 
   <canvas id="canvas" width="300" height="533" style="display: none;"></canvas>
   <img id="final-image" />
+
+  <div class="fade-in" style="margin-top: 30px;">
+    <div class="arrow">⬇️</div>
+    <button onclick="compartilhar()">Compartilhe o link com outros amigos</button>
+  </div>
 
   <script>
     const upload = document.getElementById('upload');
