@@ -117,18 +117,17 @@
       if (file) {
         const img = new Image();
         img.onload = () => {
-          const aspectRatio = img.width / img.height;
           const containerWidth = 300;
           const containerHeight = 533;
-          const containerRatio = containerWidth / containerHeight;
 
-          if (aspectRatio > containerRatio) {
-            userPhoto.width = containerWidth * aspectRatio / containerRatio;
-            userPhoto.height = containerHeight;
-          } else {
-            userPhoto.width = containerWidth;
-            userPhoto.height = containerHeight * containerRatio / aspectRatio;
-          }
+          const scale = Math.max(containerWidth / img.width, containerHeight / img.height);
+          const newWidth = img.width * scale;
+          const newHeight = img.height * scale;
+
+          userPhoto.width = newWidth;
+          userPhoto.height = newHeight;
+          userPhoto.style.left = `${(containerWidth - newWidth) / 2}px`;
+          userPhoto.style.top = `${(containerHeight - newHeight) / 2}px`;
 
           userPhoto.src = URL.createObjectURL(file);
           userPhoto.style.display = 'block';
@@ -146,7 +145,7 @@
       const finalImg = document.getElementById('final-image');
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(photo, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(photo, parseFloat(photo.style.left || 0), parseFloat(photo.style.top || 0), photo.width, photo.height);
 
       const img = new Image();
       img.src = frame.src;
