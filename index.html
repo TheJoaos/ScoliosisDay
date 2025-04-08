@@ -100,10 +100,35 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-5px); }
     }
+    .tutorial {
+      font-size: 14px;
+      margin-top: 20px;
+      text-align: left;
+      max-width: 320px;
+    }
+    .tutorial h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .tutorial ol {
+      padding-left: 20px;
+    }
   </style>
 </head>
 <body>
   <h2 class="fade-in">Marque presença no Scoliosis Day</h2>
+  <div class="tutorial fade-in">
+    <h3>📸 Como usar o Filtro <em>Eu vou</em> do Scoliosis Day:</h3>
+    <ol>
+      <li><strong>Clique no botão “Escolher arquivo”</strong><br>Vai abrir a galeria do seu celular ou a câmera (você escolhe).</li>
+      <li><strong>Tire uma foto ou selecione uma da sua galeria</strong><br>Ela vai aparecer automaticamente com o filtro <em>Eu vou</em>!</li>
+      <li><strong>Clique em “Ver imagem final”</strong><br>Isso vai gerar a imagem completa com o filtro aplicado.</li>
+      <li><strong>Pressione e segure a imagem final</strong><br>Depois, <em>salve na sua galeria</em> (no Android e iPhone, basta segurar a imagem por alguns segundos).</li>
+      <li><strong>[Opcional] Toque em “Salvar imagem no dispositivo”</strong><br>Para garantir o download automático da foto final.</li>
+      <li><strong>Compartilhe com seus amigos!</strong><br>Use nas redes sociais ou envie por WhatsApp marcando presença no Scoliosis Day 💙</li>
+    </ol>
+  </div>
   <input type="file" accept="image/*" id="upload" class="fade-in" />
   <div class="container fade-in" id="preview">
     <img id="user-photo" src="" alt="Sua foto" style="display: none;" />
@@ -111,20 +136,18 @@
   </div>
   <button class="fade-in" onclick="downloadImage()">Ver imagem final</button>
   <div class="info-text fade-in">Pressione e segure a imagem abaixo para salvar na sua galeria.</div>
-
   <canvas id="canvas" width="300" height="533" style="display: none;"></canvas>
   <img id="final-image" />
-  <button id="save-btn" style="display: none;">Salvar imagem no dispositivo</button>
-
-  <div class="fade-in" style="margin-top: 30px;" id="compartilhar-bloco">
+  <button id="save-button" style="display:none;">Salvar imagem no dispositivo</button>
+  <div class="fade-in" style="margin-top: 30px;">
     <div class="arrow">⬇️</div>
     <button onclick="compartilhar()">Compartilhe o link com outros amigos</button>
   </div>
-
   <script>
     const upload = document.getElementById('upload');
     const userPhoto = document.getElementById('user-photo');
     const previewContainer = document.getElementById('preview');
+    const saveButton = document.getElementById('save-button');
 
     upload.addEventListener('change', (e) => {
       const file = e.target.files[0];
@@ -157,7 +180,6 @@
       const photo = document.getElementById('user-photo');
       const frame = document.getElementById('frame');
       const finalImg = document.getElementById('final-image');
-      const saveBtn = document.getElementById('save-btn');
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(photo, parseFloat(photo.style.left || 0), parseFloat(photo.style.top || 0), photo.width, photo.height);
@@ -168,17 +190,19 @@
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         const finalData = canvas.toDataURL("image/png");
         finalImg.src = finalData;
-        saveBtn.style.display = 'inline-block';
-        saveBtn.onclick = () => {
-          const a = document.createElement('a');
-          a.href = finalData;
-          a.download = 'scoliosisday.png';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        };
+        saveButton.style.display = 'inline-block';
       };
     }
+
+    saveButton.addEventListener('click', () => {
+      const finalImg = document.getElementById('final-image');
+      const a = document.createElement('a');
+      a.href = finalImg.src;
+      a.download = 'scoliosisday.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
 
     function compartilhar() {
       if (navigator.share) {
